@@ -18,15 +18,15 @@
         <div class="row">
             <div class="col-12 m-2">
                 <label class="col-form-label" for="amount">Amount:</label>
-                <input type="number" class="form-control" name="amount" required="true">
+                <input type="number" class="form-control" name="amount" required="true" id="amount">
             </div>
             <div class="col-12 m-2">
                 <label class="col-form-label" for="description">Description:</label>
-                <input type="text" class="form-control" name="description">
+                <input type="text" class="form-control" name="description" id="description">
             </div>
             <div class="col-12 m-2">
                 <label class="col-form-label" for="category">Choose Category:</label>
-                <select class="form-control" name="category">
+                <select class="form-control" name="category" id="category">
                     <option value="groceries">Groceries</option>
                     <option value="utilities">Utilities</option>
                     <option value="transportation">Transportation</option>
@@ -42,6 +42,9 @@
         </div>
     </form>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"
+    integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="index.js"></script>
 
 </html>
