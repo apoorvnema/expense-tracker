@@ -9,7 +9,12 @@ form.addEventListener('submit', (e) => {
     }
     axios.post("http://127.0.0.1:3000/user/signup", signup)
         .then(result => {
-            window.location.href = 'index.html';
+            window.location.reload();
         })
         .catch(err => alert(err.response.data.errors[0].message))
+})
+
+const login = document.getElementById("login");
+login.addEventListener("click", () => {
+    window.location.href = "login.html"
 })

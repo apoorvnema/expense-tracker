@@ -16,3 +16,21 @@ exports.signUp = async (req, res) => {
         res.status(500).json(error);
     }
 }
+
+exports.logIn = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        const findEmail = await User.findOne({ where: { email: email } });
+        if (!findEmail) {
+            return res.status(404).json({ message: 'User does not exist' });
+        }
+        if (findEmail.password != password) {
+            return res.status(401).json({ message: 'Password is incorrect' });
+        }
+        res.status(200).json(findEmail);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
