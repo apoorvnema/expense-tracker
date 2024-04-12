@@ -1,14 +1,17 @@
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
 
 exports.signUp = async (req, res) => {
     try {
         const name = req.body.name;
         const email = req.body.email;
         const password = req.body.password;
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
         const result = await User.create({
             name: name,
             email: email,
-            password: password
+            password: hash
         })
         res.status(201).json(result);
     }
@@ -25,7 +28,8 @@ exports.logIn = async (req, res) => {
         if (!findEmail) {
             return res.status(404).json({ message: 'User not found' });
         }
-        if (findEmail.password != password) {
+        const comparePass = await bcrypt.compare(password, findEmail.password);
+        if (!comparePass) {
             return res.status(401).json({ message: 'User not authorized' });
         }
         res.status(200).json({ message: 'User login successful' });
