@@ -8,7 +8,7 @@ form.addEventListener("submit", (e) => {
     }
     axios.post("http://127.0.0.1:3000/user/login", login)
         .then(result => {
-            alert("Successfully Logged In");
+            alert(result.data.message);
             window.location.href = "index.html"
         })
         .catch(err => alert(err.response.data.message))
