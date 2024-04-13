@@ -17,9 +17,10 @@ exports.addExpense = (req, res) => {
 
 exports.getExpense = (req, res) => {
     const id = req.user.id;
+    const premium = req.user.ispremiumuser;
     Expense.findAll({ where: { userId: id } })
         .then((expenses) => {
-            res.json(expenses);
+            res.json({ expenses: expenses, premium: premium });
         })
         .catch(err => console.log(err));
 }

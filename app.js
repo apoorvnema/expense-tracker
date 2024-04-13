@@ -6,8 +6,10 @@ const dotenv = require('dotenv');
 const sequelize = require("./utils/database");
 const expenseRoute = require("./routes/expense");
 const userRoute = require("./routes/user");
+const purchaseRoute = require("./routes/purchase");
 const User = require("./models/user");
 const Expense = require("./models/expense");
+const Order = require("./models/order");
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,9 +18,13 @@ dotenv.config();
 
 app.use('/expense', expenseRoute);
 app.use('/user', userRoute);
+app.use('/purchase', purchaseRoute);
 
 Expense.belongsTo(User);
 User.hasMany(Expense);
+
+Order.belongsTo(User);
+User.hasMany(Order);
 
 sequelize
     // .sync({ force: true })

@@ -34,7 +34,11 @@ form.addEventListener("submit", (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     axios.get("http://127.0.0.1:3000/expense/get-expense", { headers: { "Authorization": token } })
         .then(result => {
-            result.data.forEach(expense => {
+            const premium = result.data.premium;
+            if (premium) {
+                document.getElementById("buy-premium").style.display = "none";
+            }
+            result.data.expenses.forEach(expense => {
                 const amount = expense.amount;
                 const description = expense.description;
                 const category = expense.category;
@@ -71,3 +75,31 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => console.log(err))
 });
+
+document.getElementById('buy-premium').addEventListener('click', async (e) => {
+    const response = await axios.get('http://127.0.0.1:3000/purchase/premiummembership', { headers: { "Authorization": token } })
+    console.log(response);
+    var options = {
+        "key": response.data.key_id,
+        "order_id": response.data.order.id,
+        "handler": async function (response) {
+            await axios.post("http://127.0.0.1:3000/purchase/updatetransactionstatus", {
+                order_id: options.order_id,
+                payment_id: response.razorpay_payment_id,
+            }, { headers: { "Authorization": token } })
+
+            alert("You are a Premium User Now");
+            window.location.reload();
+        }
+    }
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
+    rzp1.on('payment.failed', async function (response) {
+        await axios.post("http://127.0.0.1:3000/purchase/failedtransactionstatus", {
+            order_id: options.order_id,
+            payment_id: response.razorpay_payment_id,
+        }, { headers: { "Authorization": token } })
+        alert(response.error.description);
+    });
+})
