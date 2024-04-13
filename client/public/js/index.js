@@ -1,6 +1,8 @@
 const form = document.querySelector("form");
 const ul = document.querySelector("ul");
+const token = localStorage.getItem("token");
 form.addEventListener("submit", (e) => {
+    e.preventDefault();
     const amount = e.target.amount.value;
     const description = e.target.description.value;
     const category = e.target.category.value;
@@ -9,7 +11,7 @@ form.addEventListener("submit", (e) => {
         description: description,
         category: category
     };
-    axios.post("http://127.0.0.1:3000/expense/add-expense", expenseDetails)
+    axios.post("http://127.0.0.1:3000/expense/add-expense", expenseDetails, { headers: { "Authorization": token } })
         .then(res => {
             const id = res.data.id;
             const li = document.createElement("li");
@@ -24,12 +26,13 @@ form.addEventListener("submit", (e) => {
             li.classList.add("justify-content-between")
             li.classList.add("align-items-center")
             ul.appendChild(li);
+            window.location.reload();
         })
         .catch(err => console.log(err))
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    axios.get("http://127.0.0.1:3000/expense/get-expense")
+    axios.get("http://127.0.0.1:3000/expense/get-expense", { headers: { "Authorization": token } })
         .then(result => {
             result.data.forEach(expense => {
                 const amount = expense.amount;
@@ -50,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const editBtn = li.querySelector(".edit-btn");
                 const deleteBtn = li.querySelector(".delete-btn");
                 editBtn.addEventListener("click", () => {
-                    axios.delete(`http://127.0.0.1:3000/expense/delete-expense/${editBtn.parentElement.id}`)
+                    axios.delete(`http://127.0.0.1:3000/expense/delete-expense/${editBtn.parentElement.id}`, { headers: { "Authorization": token } })
                         .then(res => {
                             document.getElementById('amount').value = amount;
                             document.getElementById('description').value = description;
@@ -59,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }).catch(err => console.log(err));
                 })
                 deleteBtn.addEventListener("click", () => {
-                    axios.delete(`http://127.0.0.1:3000/expense/delete-expense/${deleteBtn.parentElement.id}`)
+                    axios.delete(`http://127.0.0.1:3000/expense/delete-expense/${deleteBtn.parentElement.id}`, { headers: { "Authorization": token } })
                         .then(res => {
                             deleteBtn.parentElement.remove();
                         }).catch(err => console.log(err));

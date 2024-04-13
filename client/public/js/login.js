@@ -9,6 +9,7 @@ form.addEventListener("submit", (e) => {
     axios.post("http://127.0.0.1:3000/user/login", login)
         .then(result => {
             alert(result.data.message);
+            localStorage.setItem("token", result.data.token);
             window.location.href = "index.html"
         })
         .catch(err => alert(err.response.data.message))
