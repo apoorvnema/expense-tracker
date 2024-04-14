@@ -34,7 +34,8 @@ const Expense = require('../models/expense');
 exports.getLeaderboard = async (req, res) => {
     try {
         const leaderboard = await User.findAll({
-            attributes: ['name', 'totalexpense']
+            attributes: ['name', 'totalexpense'],
+            order: [['totalexpense', 'DESC']]
         });
         res.status(200).json(leaderboard);
     } catch (err) {

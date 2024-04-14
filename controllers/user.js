@@ -1,12 +1,14 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sequelize = require("../utils/database");
 
 function generateAccessToken(id, name) {
     return jwt.sign({ id: id, name: name }, process.env.JWT_ACCESS_TOKEN);
 }
 
 exports.signUp = async (req, res) => {
+    const t = await sequelize.transaction();
     try {
         const name = req.body.name;
         const email = req.body.email;
@@ -16,11 +18,14 @@ exports.signUp = async (req, res) => {
         const result = await User.create({
             name: name,
             email: email,
-            password: hash
+            password: hash,
+            transaction: t
         })
+        await t.commit();
         res.status(201).json(result);
     }
     catch (error) {
+        await t.rollback();
         res.status(500).json(error);
     }
 }
