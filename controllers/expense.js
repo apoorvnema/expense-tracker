@@ -1,10 +1,16 @@
 const Expense = require("../models/expense");
+const User = require("../models/user");
+const sequelize = require("../utils/database");
 
-exports.addExpense = (req, res) => {
+exports.addExpense = async (req, res) => {
     const amount = req.body.amount;
     const description = req.body.description;
     const category = req.body.category;
     const id = req.user.id;
+    await User.update(
+        { totalexpense: sequelize.literal(`totalexpense + ${amount}`) },
+        { where: { id: id } }
+    );
     Expense.create({
         amount: amount,
         description: description,
