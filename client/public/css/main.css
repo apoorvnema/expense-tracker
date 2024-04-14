@@ -1,3 +1,7 @@
+body {
+    overflow: hidden;
+}
+
 #premium {
     position: absolute;
     right: 0px;
