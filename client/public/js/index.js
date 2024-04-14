@@ -36,7 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(result => {
             const premium = result.data.premium;
             if (premium) {
-                document.getElementById("buy-premium").style.display = "none";
+                const premium = document.getElementById('premium');
+                premium.innerHTML = `<h4>You are a premium user</h4><button type="button" class="btn btn-warning add" name="show-leaderboard" id="show-leaderboard" data-bs-toggle="modal" data-bs-target="#leaderboard">Show Leaderboard</button>`;
+                premium.style.color = "yellow";
+                const leaderboardItem = document.getElementById("leaderboard-items");
+                axios.get("http://127.0.0.1:3000/premium/leaderboard", { headers: { "Authorization": token } })
+                    .then(result => {
+                        result.data[0].forEach(user => {
+                            const li = document.createElement("li");
+                            li.innerText = `${user.name} - ${user.Total_Expenses}`;
+                            leaderboardItem.appendChild(li);
+                        });
+                    })
+                    .catch(err => console.log(err));
             }
             result.data.expenses.forEach(expense => {
                 const amount = expense.amount;

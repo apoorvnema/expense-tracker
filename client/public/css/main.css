@@ -1,6 +1,11 @@
-#buy-premium {
+#premium {
     position: absolute;
     right: 0px;
     top: 0px;
     margin: 15px;
+    text-align: right;
+}
+
+.modal {
+    color: black;
 }
