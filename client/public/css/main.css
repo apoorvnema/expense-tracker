@@ -13,3 +13,11 @@ body {
 .modal {
     color: black;
 }
+
+#forget {
+    color: white;
+}
+
+#forget:hover {
+    color: #ffc107;
+}
