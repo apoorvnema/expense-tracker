@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const premium = result.data.premium;
             if (premium) {
                 const premium = document.getElementById('premium');
-                premium.innerHTML = `<h4>You are a premium user</h4><button type="button" class="btn btn-warning add" name="show-leaderboard" id="show-leaderboard" data-bs-toggle="modal" data-bs-target="#leaderboard">Show Leaderboard</button>`;
+                premium.innerHTML = `<h4>You are a premium user</h4>
+                <button type="button" class="btn btn-warning" name="show-leaderboard" id="show-leaderboard" data-bs-toggle="modal" data-bs-target="#leaderboard">Show Leaderboard</button>
+                <button type="button" class="btn btn-success" name="generate-report" id="generate-report" data-bs-toggle="modal" data-bs-target="#report">Generate Report</button>`;
                 premium.style.color = "yellow";
                 const leaderboardItem = document.getElementById("leaderboard-items");
                 axios.get("http://127.0.0.1:3000/premium/leaderboard", { headers: { "Authorization": token } })
@@ -49,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     })
                     .catch(err => console.log(err));
+
             }
             result.data.expenses.forEach(expense => {
                 const amount = expense.amount;

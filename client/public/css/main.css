@@ -1,5 +1,6 @@
 body {
     overflow: hidden;
+    background-color: #40414f;
 }
 
 #premium {
@@ -20,4 +21,30 @@ body {
 
 #forget:hover {
     color: #ffc107;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td,
+th {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+/* Generate Report */
+.report-body {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+table {
+    width: -webkit-fill-available;
+    text-align: center;
+}
+
+th {
+    background-color: #0da37f;
 }
