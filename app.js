@@ -12,11 +12,13 @@ const passwordRoute = require("./routes/password");
 const User = require("./models/user");
 const Expense = require("./models/expense");
 const Order = require("./models/order");
+const ForgotPasswordRequests = require("./models/forgotPassword");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 dotenv.config();
+app.use(express.static("public"));
 
 app.use('/expense', expenseRoute);
 app.use('/user', userRoute);
@@ -29,6 +31,9 @@ User.hasMany(Expense);
 
 Order.belongsTo(User);
 User.hasMany(Order);
+
+User.hasMany(ForgotPasswordRequests);
+ForgotPasswordRequests.belongsTo(User);
 
 sequelize
     // .sync({ force: true })

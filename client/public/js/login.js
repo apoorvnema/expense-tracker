@@ -21,9 +21,17 @@ forgetForm.addEventListener("submit", (e) => {
     const email = e.target.email.value;
     axios.post("http://127.0.0.1:3000/password/forgotpassword", { email: email })
         .then(result => {
-            console.log(result.data);
+            alert(result.data.message);
+            window.location.reload();
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+            if (err.response.status === 404) {
+                alert(err.response.data.error);
+            }
+            else {
+                alert("Something went wrong");
+            }
+        })
 })
 
 const signup = document.getElementById("signup");
