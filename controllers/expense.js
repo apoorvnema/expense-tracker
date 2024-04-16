@@ -5,17 +5,19 @@ const sequelize = require("../utils/database");
 exports.addExpense = async (req, res) => {
     const t = await sequelize.transaction();
     try {
-        const amount = req.body.amount;
+        const expense = req.body.expense || 0;
+        const income = req.body.income || 0;
         const description = req.body.description;
         const category = req.body.category;
         const id = req.user.id;
         await User.update(
-            { totalexpense: sequelize.literal(`totalexpense + ${amount}`) },
+            { totalexpense: sequelize.literal(`totalexpense - ${expense} + ${income}`) },
             { where: { id: id } },
             { transaction: t }
         );
         const result = await Expense.create({
-            amount: amount,
+            expense: expense,
+            income: income,
             description: description,
             category: category,
             userId: id,
@@ -50,10 +52,11 @@ exports.deleteExpense = async (req, res) => {
     if (!expense) {
         return res.status(404).json({ message: "Expense not found" });
     }
-    const amount = expense.amount;
+    const expenseAmount = expense.expense;
+    const incomeAmount = expense.income;
     try {
         await User.update(
-            { totalexpense: sequelize.literal(`totalexpense - ${amount}`) },
+            { totalexpense: sequelize.literal(`totalexpense - ${incomeAmount} + ${expenseAmount}`) },
             { where: { id: userId } },
             { transaction: t }
         );

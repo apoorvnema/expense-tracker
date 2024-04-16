@@ -19,10 +19,10 @@ exports.sendForgotPassword = async (req, res) => {
         const id = uuidv4();
         const htmlContent = `<a href="http://127.0.0.1:3000/password/forgotpassword/${id}">Link to Reset Password</a>`;
         const transporter = createTransport({
-            host: 'smtp-relay.brevo.com',
-            port: 587,
+            host: process.env.BREVO_HOST,
+            port: process.env.PORT,
             auth: {
-                user: 'apoorvnema38@gmail.com',
+                user: process.env.BREVO_USER,
                 pass: process.env.BREVO_API_KEY
             }
         });

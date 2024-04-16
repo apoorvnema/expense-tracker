@@ -36,10 +36,23 @@
                 </select>
             </div>
             <div class="col-12 m-2">
-                <button type="submit" class="btn btn-primary add" name="add">Add Expense</button>
+                <button type="submit" class="btn btn-success" value="income">Add Income</button>
+                <button type="submit" class="btn btn-danger" value="expense">Add Expense</button>
             </div>
             <ul class="list-group m-2">
             </ul>
+            <table class="m-2" id="all-record">
+                <tr>
+                    <th>Income</th>
+                    <th>Expense</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Buttons</th>
+                </tr>
+                <tr>
+                    <td colspan="5">No Data Available!</td>
+                </tr>
+            </table>
         </div>
     </form>
 
@@ -105,6 +118,36 @@
                     <br>
                     <button class="btn btn-success" type="button" name="downloadReport" id="downloadReport">Download
                         Report</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="onModalClose()"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Report -->
+    <div class="modal fullscreen-modal fade" id="showReportModal" tabindex="-1" aria-labelledby="showReportModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showReportModalLabel">All Reports</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="onModalClose()"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body table-responsive">
+                    <table id="all-reports">
+                        <tr>
+                            <th>Date</th>
+                            <th>URL</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">No Data Available!</td>
+                        </tr>
+                    </table>
+                    <br>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="onModalClose()"

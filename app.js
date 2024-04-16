@@ -12,6 +12,7 @@ const passwordRoute = require("./routes/password");
 const User = require("./models/user");
 const Expense = require("./models/expense");
 const Order = require("./models/order");
+const Report = require("./models/report");
 const ForgotPasswordRequests = require("./models/forgotPassword");
 
 const app = express();
@@ -34,6 +35,9 @@ User.hasMany(Order);
 
 User.hasMany(ForgotPasswordRequests);
 ForgotPasswordRequests.belongsTo(User);
+
+User.hasMany(Report);
+Report.belongsTo(User);
 
 sequelize
     // .sync({ force: true })

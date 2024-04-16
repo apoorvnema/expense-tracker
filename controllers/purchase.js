@@ -54,8 +54,8 @@ exports.failedTransactionStatus = async (req, res, next) => {
     try {
         const { payment_id, order_id } = req.body;
         const order = await Order.findOne({ where: { orderId: order_id } });
-        const paymentUpdate = order.update({ paymentId: payment_id, status: "FAILED" });
-        const userUpdate = req.user.update({ ispremiumuser: false });
+        const paymentUpdate = order.update({ paymentId: payment_id, status: "FAILED" }, { transaction: t });
+        const userUpdate = req.user.update({ ispremiumuser: false }, { transaction: t });
         await Promise.all([paymentUpdate, userUpdate])
         await t.commit();
         return res.status(202).json({ message: "Transaction Failed" });

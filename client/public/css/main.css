@@ -1,14 +1,11 @@
 body {
-    overflow: hidden;
     background-color: #40414f;
+    overflow-x: hidden;
 }
 
 #premium {
-    position: absolute;
-    right: 0px;
-    top: 0px;
     margin: 15px;
-    text-align: right;
+    text-align: center;
 }
 
 .modal {
@@ -29,7 +26,7 @@ table {
 
 td,
 th {
-    border: 1px solid black;
+    border: 2px solid black;
     padding: 8px;
 }
 
@@ -41,10 +38,31 @@ th {
 }
 
 table {
-    width: -webkit-fill-available;
+    width: 100%;
     text-align: center;
 }
 
 th {
     background-color: #0da37f;
 }
+
+tr {
+    background-color: white;
+    color: black;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        overflow-x: auto;
+    }
+}
+
+.income {
+    background-color: #19875477;
+}
+
+.expense {
+    background-color: #dc354677;
+}
+
+/* All Reports */
