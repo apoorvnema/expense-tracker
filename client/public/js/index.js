@@ -32,7 +32,9 @@ form.addEventListener("submit", (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    axios.get("http://127.0.0.1:3000/expense/get-expense", { headers: { "Authorization": token } })
+    const page1 = document.getElementById('page-1');
+
+    axios.get(`http://127.0.0.1:3000/expense/getExpensePerPage?page=${page1.dataset.page}`, { headers: { "Authorization": token } })
         .then(result => {
             const premium = result.data.premium;
             if (premium) {
@@ -211,4 +213,67 @@ downloadReport.addEventListener("click", () => {
             a.click();
         })
         .catch(err => console.log(err));
+})
+
+const page2 = document.getElementById('page-2');
+page2.addEventListener('click', () => {
+    axios.get(`http://127.0.0.1:3000/expense/getExpensePerPage?page=${page2.dataset.page}`, { headers: { "Authorization": token } })
+        .then(result => {
+            record.innerHTML = "";
+            // if (result.data.expenses.length != 0) record.firstElementChild.lastElementChild.remove();
+            result.data.expenses.forEach(res => {
+                const expense = res.expense;
+                const income = res.income;
+                const description = res.description;
+                const category = res.category;
+                const buttonHTML = `
+                <button type="button" class="btn btn-success edit-btn" style="margin-left:auto; margin-right:5px;">Edit</button>
+                <button type="button" class="btn btn-danger delete-btn">Delete</button>
+                `;
+                const tr = document.createElement("tr");
+                tr.id = res.id;
+                const td1 = document.createElement("td");
+                const td2 = document.createElement("td");
+                const td3 = document.createElement("td");
+                const td4 = document.createElement("td");
+                const td5 = document.createElement("td");
+                td1.innerText = income;
+                td1.classList.add("income");
+                td2.innerText = expense;
+                td2.classList.add("expense");
+                td3.innerText = description;
+                td4.innerText = category;
+                td5.innerHTML = buttonHTML;
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tr.appendChild(td4);
+                tr.appendChild(td5);
+                record.appendChild(tr);
+
+                const editBtn = tr.querySelector(".edit-btn");
+                const deleteBtn = tr.querySelector(".delete-btn");
+                editBtn.addEventListener("click", () => {
+                    axios.delete(`http://127.0.0.1:3000/expense/delete-expense/${editBtn.parentElement.parentElement.id}`, { headers: { "Authorization": token } })
+                        .then(res => {
+                            if (expense >= income) {
+                                document.getElementById('amount').value = expense;
+                            }
+                            else {
+                                document.getElementById('amount').value = income;
+                            }
+                            document.getElementById('description').value = description;
+                            document.getElementById('category').value = category;
+                            editBtn.parentElement.parentElement.remove();
+                        }).catch(err => console.log(err));
+                })
+                deleteBtn.addEventListener("click", () => {
+                    axios.delete(`http://127.0.0.1:3000/expense/delete-expense/${deleteBtn.parentElement.parentElement.id}`, { headers: { "Authorization": token } })
+                        .then(res => {
+                            window.location.reload();
+                        }).catch(err => console.log(err));
+                });
+            });
+        })
+        .catch(err => console.log(err))
 })
