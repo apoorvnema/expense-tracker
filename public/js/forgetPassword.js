@@ -12,12 +12,24 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Passwords do not match. Please try again.');
         } else {
             try {
-                await axios.post(window.location.pathname, { password });
-                alert('Password reset successful.');
-                window.location.reload();
+                const response = await fetch("https://expense-tracker.apoorvnema.pro" + window.location.pathname, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                if (response.ok) {
+                    alert('Password reset successful.');
+                    window.location.reload();
+                } else {
+                    const errorMessage = await response.text();
+                    throw new Error(`Error: ${response.status} - ${errorMessage}`);
+                }
             }
             catch (err) {
-                console.log(err);
+                console.error(err);
             }
         }
     });

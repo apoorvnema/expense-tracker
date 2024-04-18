@@ -27,7 +27,7 @@ exports.premiumMembership = async (req, res, next) => {
     }
     catch (error) {
         t.rollback();
-        console.log(error);
+        console.error(error);
         res.status(500).json({ error: "Internal server error" });
     }
 }
@@ -44,7 +44,7 @@ exports.updateTransactionStatus = async (req, res, next) => {
         return res.status(202).json({ message: "Transaction Successful" });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         t.rollback();
         res.status(403).json({ error: "Something went wrong" });
     }
@@ -62,7 +62,7 @@ exports.failedTransactionStatus = async (req, res, next) => {
         return res.status(202).json({ message: "Transaction Failed" });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         t.rollback();
         res.status(403).json({ error: "Something went wrong" });
     }

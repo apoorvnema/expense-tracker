@@ -1,7 +1,22 @@
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require('dotenv');
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+dotenv.config();
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(helmet());
+app.use(compression());
+app.use(morgan("combined", { stream: accessLogStream }));
 
 const sequelize = require("./utils/database");
 const expenseRoute = require("./routes/expense");
@@ -15,17 +30,15 @@ const Order = require("./models/order");
 const Report = require("./models/report");
 const ForgotPasswordRequests = require("./models/forgotPassword");
 
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
-dotenv.config();
-app.use(express.static("public"));
-
 app.use('/expense', expenseRoute);
 app.use('/user', userRoute);
 app.use('/purchase', purchaseRoute);
 app.use('/premium', premiumRoute);
 app.use('/password', passwordRoute);
+
+app.use((req, res, next) => {
+    res.status(200).sendFile(path.join(__dirname, `public/${req.url}`));
+});
 
 Expense.belongsTo(User);
 User.hasMany(Expense);
@@ -43,7 +56,7 @@ sequelize
     // .sync({ force: true })
     .sync()
     .then(() => {
-        app.listen(3000, () => {
+        app.listen(process.env.PORT || 3000, () => {
             console.log("Server running on port 3000");
         })
     })

@@ -17,17 +17,17 @@ exports.sendForgotPassword = async (req, res) => {
             throw error;
         }
         const id = uuidv4();
-        const htmlContent = `<a href="http://127.0.0.1:3000/password/forgotpassword/${id}">Link to Reset Password</a>`;
+        const htmlContent = `<a href="https://expense-tracker.apoorvnema.pro/password/forgotpassword/${id}">Link to Reset Password</a>`;
         const transporter = createTransport({
             host: process.env.BREVO_HOST,
-            port: process.env.PORT,
+            port: 587,
             auth: {
                 user: process.env.BREVO_USER,
                 pass: process.env.BREVO_API_KEY
             }
         });
         const mailOptions = {
-            from: '"Apoorv Nema" <apoorvnema38@gmail.com>',
+            from: '"Apoorv Nema" <contact@apoorvnema.pro>',
             to: req.body.email,
             subject: 'Forgot Password',
             text: htmlContent
@@ -42,7 +42,7 @@ exports.sendForgotPassword = async (req, res) => {
             res.status(404).json({ error: err.message });
         }
         else {
-            console.log(err);
+            console.error(err);
             await t.rollback();
             res.status(500).json({ error: "Internal server error" });
         }
@@ -59,11 +59,11 @@ exports.getForgotPassword = async (req, res) => {
             res.send("<h1>Password reset request expired</h1>");
         }
         else {
-            res.sendFile(path.join(__dirname, '../views/forgetPassword.html'));
+            res.sendFile(path.join(__dirname, '../public/forgetPassword.html'));
         }
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
