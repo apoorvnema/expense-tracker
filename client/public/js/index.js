@@ -64,10 +64,11 @@ async function handleEditExpense(btn, expense, income, description, category) {
     }
 }
 async function handleGetExpense(page) {
+    const itemsPerPage = localStorage.getItem('itemsPerPage') || 2;
     const record = document.querySelector("#all-record");
     const paginationItems = document.querySelectorAll('.pagination .page-item a');
     try {
-        const getExpense = await axios.get(`http://127.0.0.1:3000/expense/getExpensePerPage?page=${page}`, { headers: { "Authorization": token } })
+        const getExpense = await axios.get(`http://127.0.0.1:3000/expense/getExpensePerPage?page=${page}&items_per_page=${itemsPerPage}`, { headers: { "Authorization": token } })
         const premium = getExpense.data.premium;
         if (premium) {
             premiumFeatures();
@@ -284,12 +285,29 @@ async function premiumShowAllReports() {
 /* DOM Manipulation */
 /* On Page Reload */
 document.addEventListener('DOMContentLoaded', async () => {
+    const itemsPerPage = localStorage.getItem('itemsPerPage') || 2;
+    const recordPerPage = document.querySelectorAll("#records-per-page option");
+    recordPerPage.forEach(item => {
+        if (item.value == itemsPerPage) {
+            item.selected = true;
+        }
+    });
     const currentPage = localStorage.getItem('currentPage') || 1;
     const pagination = document.querySelector(".pagination");
     handleGetExpense(currentPage);
     handlePageChange();
     handlePageNavDisable(pagination, currentPage);
+    handleRecordPerPage();
 });
+/* Record Per Page */
+function handleRecordPerPage() {
+    const recordPerPage = document.querySelector("#records-per-page");
+    recordPerPage.addEventListener('change', (e) => {
+        const itemsPerPage = e.target.value;
+        localStorage.setItem('itemsPerPage', itemsPerPage);
+        window.location.reload();
+    });
+}
 /* Page Change Events */
 function handlePageChange() {
     const paginationItems = document.querySelectorAll('.pagination .page-item a');
