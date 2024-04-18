@@ -65,4 +65,28 @@ tr {
     background-color: #dc354677;
 }
 
+nav {
+    margin-top: 25px;
+}
+
+.active .page-link {
+    background-color: #0da37f;
+    color: white;
+    border: 1px solid #0da37f;
+}
+
+.active .page-link:hover {
+    background-color: #0da3807b;
+    color: white;
+    border: 1px solid #0da38079;
+}
+
+.page-link {
+    color: #0da37f;
+}
+
+.page-link:hover {
+    color: #13b993;
+}
+
 /* All Reports */

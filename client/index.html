@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- Head -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +12,19 @@
     <link rel="stylesheet" href="public/css/main.css">
 </head>
 
+<!-- Body -->
+
 <body class="text-light">
+
+    <!-- Heading -->
     <h1 class="text-center ">Expense Tracker App</h1>
+
+    <!-- Premium -->
     <div id="premium">
         <button type="button" class="btn btn-warning add" name="buy-premium" id="buy-premium">Buy Premium</button>
     </div>
+
+    <!-- Add Expense -->
     <form class="form">
         <div class="row">
             <div class="col-12 m-2">
@@ -39,8 +49,6 @@
                 <button type="submit" class="btn btn-success" value="income">Add Income</button>
                 <button type="submit" class="btn btn-danger" value="expense">Add Expense</button>
             </div>
-            <ul class="list-group m-2">
-            </ul>
             <table class="m-2" id="all-record">
                 <tr>
                     <th>Income</th>
@@ -56,8 +64,22 @@
         </div>
     </form>
 
-    <button data-page="1" id="page-1">1</button>
-    <button data-page="2" id="page-2">2</button>
+    <!-- Pagination -->
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link first" href="#">1</a></li>
+            <li class="page-item active">
+                <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item"><a class="page-link last" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
 
     <!-- Leaderboard -->
     <div class="modal fade" id="leaderboard" tabindex="-1" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
@@ -65,16 +87,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="onModalClose()"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <ol id="leaderboard-items">
                     </ol>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="onModalClose()"
-                        data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -86,8 +106,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="reportModalLabel">Day to Day Expenses</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="onModalClose()"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body report-body">
                     <h4 id="current-year">2024</h4>
@@ -96,13 +115,11 @@
                     <table id="monthly-expense">
                         <tr>
                             <th>Date</th>
-                            <th>Description</th>
-                            <th>Category</th>
                             <th>Income</th>
                             <th>Expense</th>
                         </tr>
                         <tr>
-                            <td colspan="5">No Data Available!</td>
+                            <td colspan="3">No Data Available!</td>
                         </tr>
                     </table>
                     <br>
@@ -123,22 +140,20 @@
                         Report</button>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="onModalClose()"
-                        data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Generate Report -->
+    <!-- Show All Reports -->
     <div class="modal fullscreen-modal fade" id="showReportModal" tabindex="-1" aria-labelledby="showReportModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="showReportModalLabel">All Reports</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="onModalClose()"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body table-responsive">
                     <table id="all-reports">
@@ -153,14 +168,15 @@
                     <br>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="onModalClose()"
-                        data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
 </body>
+
+<!-- Scripts -->
 <script src="public/js/index.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"

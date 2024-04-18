@@ -26,7 +26,7 @@ exports.signUp = async (req, res) => {
     }
     catch (error) {
         await t.rollback();
-        res.status(500).json(error);
+        res.status(500).json({ error: "Internal server error" });
     }
 }
 
@@ -45,6 +45,6 @@ exports.logIn = async (req, res) => {
         res.status(200).json({ message: 'User login successful', token: generateAccessToken(user.id, user.name, user.ispremiumuser) });
     }
     catch (error) {
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }

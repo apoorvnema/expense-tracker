@@ -44,7 +44,7 @@ exports.sendForgotPassword = async (req, res) => {
         else {
             console.log(err);
             await t.rollback();
-            res.status(500).json(err);
+            res.status(500).json({ error: "Internal server error" });
         }
     }
 }
