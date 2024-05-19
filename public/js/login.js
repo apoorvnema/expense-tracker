@@ -7,7 +7,7 @@ form.addEventListener("submit", (e) => {
         email: e.target.email.value,
         password: e.target.password.value
     }
-    axios.post("http://localhost:3000/user/login", login)
+    axios.post("https://expense-tracker.apoorvnema.pro/user/login", login)
         .then(result => {
             alert(result.data.message);
             localStorage.setItem("token", result.data.token);
@@ -19,7 +19,7 @@ form.addEventListener("submit", (e) => {
 forgetForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-    axios.post("http://localhost:3000/password/forgotpassword", { email: email })
+    axios.post("https://expense-tracker.apoorvnema.pro/password/forgotpassword", { email: email })
         .then(result => {
             alert(result.data.message);
             window.location.reload();

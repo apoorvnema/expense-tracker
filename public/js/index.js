@@ -26,7 +26,7 @@ async function handleAddExpense(e) {
                 category: category
             };
         }
-        await axios.post("http://localhost:3000/expense/add-expense", expenseDetails, { headers: { "Authorization": token } });
+        await axios.post("https://expense-tracker.apoorvnema.pro/expense/add-expense", expenseDetails, { headers: { "Authorization": token } });
         window.location.reload();
     }
     catch (err) {
@@ -36,7 +36,7 @@ async function handleAddExpense(e) {
 async function handleDeleteExpense(btn) {
     try {
         btn.addEventListener("click", async () => {
-            await axios.delete(`http://localhost:3000/expense/delete-expense/${btn.parentElement.parentElement.id}`, { headers: { "Authorization": token } })
+            await axios.delete(`https://expense-tracker.apoorvnema.pro/expense/delete-expense/${btn.parentElement.parentElement.id}`, { headers: { "Authorization": token } })
             window.location.reload();
         });
     }
@@ -47,7 +47,7 @@ async function handleDeleteExpense(btn) {
 async function handleEditExpense(btn, expense, income, description, category) {
     try {
         btn.addEventListener("click", async () => {
-            await axios.delete(`http://localhost:3000/expense/delete-expense/${btn.parentElement.parentElement.id}`, { headers: { "Authorization": token } })
+            await axios.delete(`https://expense-tracker.apoorvnema.pro/expense/delete-expense/${btn.parentElement.parentElement.id}`, { headers: { "Authorization": token } })
             if (expense >= income) {
                 document.getElementById('amount').value = expense;
             }
@@ -68,7 +68,7 @@ async function handleGetExpense(page) {
     const record = document.querySelector("#all-record");
     const paginationItems = document.querySelectorAll('.pagination .page-item a');
     try {
-        const getExpense = await axios.get(`http://localhost:3000/expense/getExpensePerPage?page=${page}&items_per_page=${itemsPerPage}`, { headers: { "Authorization": token } })
+        const getExpense = await axios.get(`https://expense-tracker.apoorvnema.pro/expense/getExpensePerPage?page=${page}&items_per_page=${itemsPerPage}`, { headers: { "Authorization": token } })
         const premium = getExpense.data.premium;
         if (premium) {
             premiumFeatures();
@@ -129,13 +129,13 @@ async function handleGetExpense(page) {
 /* Premium Feature Functions */
 async function buyPremium() {
     try {
-        const response = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: { "Authorization": token } })
+        const response = await axios.get('https://expense-tracker.apoorvnema.pro/purchase/premiummembership', { headers: { "Authorization": token } })
         var options = {
             "key": response.data.key_id,
             "_id": response.data.order._id,
             "orderId": response.data.order.orderId,
             "handler": async function (response) {
-                await axios.post("http://localhost:3000/purchase/updatetransactionstatus", {
+                await axios.post("https://expense-tracker.apoorvnema.pro/purchase/updatetransactionstatus", {
                     _id: options._id,
                     paymentId: response.razorpay_payment_id,
                 }, { headers: { "Authorization": token } })
@@ -147,7 +147,7 @@ async function buyPremium() {
         var rzp1 = new Razorpay(options);
         rzp1.open();
         rzp1.on('payment.failed', async function (response) {
-            await axios.post("http://localhost:3000/purchase/failedtransactionstatus", {
+            await axios.post("https://expense-tracker.apoorvnema.pro/purchase/failedtransactionstatus", {
                 _id: options._id,
                 paymentId: response.razorpay_payment_id,
             }, { headers: { "Authorization": token } })
@@ -175,7 +175,7 @@ async function premiumLeaderboard() {
     try {
         const leaderboardItem = document.getElementById("leaderboard-items");
         resetLeaderboard(leaderboardItem);
-        const getLeaderboard = await axios.get("http://localhost:3000/premium/leaderboard", { headers: { "Authorization": token } });
+        const getLeaderboard = await axios.get("https://expense-tracker.apoorvnema.pro/premium/leaderboard", { headers: { "Authorization": token } });
         getLeaderboard.data.forEach(user => {
             const li = document.createElement("li");
             li.innerText = `${user.name} - ${user.totalExpense}`;
@@ -192,7 +192,7 @@ async function premiumGenerateReport() {
         const yearlyExpense = document.getElementById("yearly-expense");
         const currentYear = document.getElementById("current-year");
         const currentMonth = document.getElementById("current-month");
-        const getReport = await axios.get("http://localhost:3000/premium/report", { headers: { "Authorization": token } })
+        const getReport = await axios.get("https://expense-tracker.apoorvnema.pro/premium/report", { headers: { "Authorization": token } })
         const monthly = getReport.data.monthly;
         const yearly = getReport.data.yearly;
         if (getReport.data.currentYear)
@@ -242,7 +242,7 @@ async function premiumGenerateReport() {
 }
 async function premiumDownloadReport() {
     try {
-        axios.get("http://localhost:3000/premium/download-report", { headers: { "Authorization": token } })
+        axios.get("https://expense-tracker.apoorvnema.pro/premium/download-report", { headers: { "Authorization": token } })
             .then(result => {
                 const a = document.createElement("a");
                 a.href = result.data.fileUrl;
@@ -259,7 +259,7 @@ async function premiumDownloadReport() {
 async function premiumShowAllReports() {
     try {
         const allReports = document.getElementById("all-reports");
-        const getReport = await axios.get("http://localhost:3000/premium/report", { headers: { "Authorization": token } })
+        const getReport = await axios.get("https://expense-tracker.apoorvnema.pro/premium/report", { headers: { "Authorization": token } })
         const reports = getReport.data.reports;
         allReports.innerHTML = `
         <tr>

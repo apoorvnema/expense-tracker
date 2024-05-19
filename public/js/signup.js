@@ -7,7 +7,7 @@ form.addEventListener('submit', (e) => {
         email: e.target.email.value,
         password: e.target.password.value
     }
-    axios.post("http://localhost:3000/user/signup", signup)
+    axios.post("https://expense-tracker.apoorvnema.pro/user/signup", signup)
         .then(result => {
             alert(result.data.message);
             window.location.href = "login.html";
