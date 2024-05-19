@@ -1,23 +1,18 @@
-const Sequelize = require('sequelize');
 const AWS = require('aws-sdk');
 
-const sequelize = require('../utils/database');
 const User = require('../models/user');
 const Expense = require('../models/expense');
 const Report = require('../models/report');
 
 exports.getLeaderboard = async (req, res) => {
-    const premium = req.user.ispremiumuser;
+    const premium = req.user.isPremiumUser;
     try {
         if (!premium) {
             return res.status(401).json({ error: 'You are not a premium user. Access to the leaderboard is restricted.' });
         }
-
-        const leaderboard = await User.findAll({
-            attributes: ['name', 'totalexpense'],
-            order: [['totalexpense', 'DESC']],
-            limit: 10
-        });
+        const leaderboard = await User.find({ totalExpense: { $gt: 0 } }, 'name totalExpense')
+            .sort({ totalExpense: -1 })
+            .limit(10);
         res.status(200).json(leaderboard);
     } catch (err) {
         console.error('Error fetching leaderboard:', err);
@@ -26,53 +21,74 @@ exports.getLeaderboard = async (req, res) => {
 };
 
 exports.generateReport = async (req, res) => {
-    const premium = req.user.ispremiumuser;
+    const premium = req.user.isPremiumUser;
     try {
         if (!premium) {
             return res.status(401).json({ error: 'You are not a premium user. Access to the report generation is restricted.' });
         }
-        const id = req.user.id;
+        const _id = req.user._id;
         const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const currentYear = new Date().getFullYear();
         const currentMonth = month[new Date().getMonth()];
-        const p1 = Expense.findAll({
-            attributes: [
-                [Sequelize.literal('SUM(income)'), 'income'],
-                [Sequelize.literal('SUM(expense)'), 'expense'],
-                [Sequelize.literal('DATE(updatedAt)'), 'updatedAt']
-            ], where: { userId: id, updatedAt: Sequelize.literal(`MONTH(updatedAt)=${new Date().getMonth() + 1}`) },
-            group: [Sequelize.literal('DATE(updatedAt)')]
-        });
-        const p2 = Expense.findAll({
-            attributes: [
-                'userId',
-                [Sequelize.literal('SUM(expense)'), 'totalExpense'],
-                [Sequelize.literal('SUM(income)'), 'totalIncome'],
-                [Sequelize.literal('MONTH(updatedAt)'), 'month']
-            ],
-            where: { userId: id, updatedAt: Sequelize.literal(`YEAR(updatedAt)=${currentYear}`) },
-            group: [Sequelize.literal('MONTH(updatedAt)')]
-        });
-        const p3 = req.user.getReports({ order: [["updatedAt", "DESC"]], limit: 20 });
+        await req.user.populate({ path: 'expenseReport' });
+        await req.user.populate({ path: 'expenses' });
+        const p1 = req.user.expenses.reduce((acc, expense) => {
+            const expenseMonth = month[expense.updatedAt.getMonth()];
+            const expenseDate = expense.updatedAt.getDate();
+            if (expenseMonth === currentMonth) {
+                const key = `${expenseMonth}-${expenseDate}`;
+                if (!acc[key]) {
+                    acc[key] = {
+                        date: expenseDate,
+                        income: 0,
+                        expense: 0
+                    };
+                }
+                acc[key].income += expense.income;
+                acc[key].expense += expense.expense;
+            }
+            
+            return acc;
+        },{});
+        const p2 = req.user.expenses.reduce((acc, expense) => {
+            const expenseYear = expense.updatedAt.getFullYear();
+            const expenseMonth = expense.updatedAt.getMonth();
+            if (expenseYear === currentYear) {
+                const key = `${expenseYear}-${expenseMonth}`;
+                if (!acc[key]) {
+                    acc[key] = {
+                        month: expenseMonth,
+                        income: 0,
+                        expense: 0
+                    };
+                }
+                acc[key].income += expense.income;
+                acc[key].expense += expense.expense;
+            }
+            return acc;
+        },{});
+        const p3 = req.user.expenseReport
+            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+            .slice(0,20);
         const [expensesMonthly, expensesYearly, allReports] = await Promise.all([p1, p2, p3]);
-        let yearly = {};
-        let monthly = {};
+        let yearly = [];
+        let monthly = [];
         let reports = {};
-        expensesMonthly.forEach((result, index) => {
-            monthly[index] = {
-                date: result.updatedAt,
-                income: result.income,
-                expense: result.expense,
-            }
-        })
-        expensesYearly.forEach((result, index) => {
-            yearly[index] = {
-                month: month[result.dataValues.month - 1],
-                expense: result.dataValues.totalExpense,
-                income: result.dataValues.totalIncome,
-                savings: result.dataValues.totalIncome - result.dataValues.totalExpense
-            }
-        })
+        for (const [key, value] of Object.entries(expensesMonthly)) {
+            monthly.push({
+                date: value.date,
+                expense: value.expense,
+                income: value.income
+            });
+        }
+        for (const [key, value] of Object.entries(expensesYearly)) {
+            yearly.push({
+                month: month[value.month-1],
+                expense: value.expense,
+                income: value.income,
+                savings: value.income - value.expense
+            });
+        }
         allReports.forEach((result, index) => {
             const updatedAt = new Date(result.updatedAt);
             const date = updatedAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
@@ -116,23 +132,24 @@ function uploadToS3(data, fileName) {
 }
 
 exports.downloadReport = async (req, res, next) => {
-    const premium = req.user.ispremiumuser;
-    const t = await sequelize.transaction();
+    const premium = req.user.isPremiumUser;
     try {
         if (!premium) {
             return res.status(401).json({ error: 'You are not a premium user. Access to the report generation is restricted.' });
         }
-        const expenses = await req.user.getExpenses();
-        const stringifiedExpenses = JSON.stringify(expenses);
-        const fileName = `Expense${req.user.id}/${new Date()}.txt`;
+        const expenses = await req.user.populate({
+            path: 'expenses',
+            select: 'expense income description category updatedAt -_id'
+        });
+        const stringifiedExpenses = JSON.stringify(expenses.expenses);
+        const fileName = `ExpenseReports/${req.user._id}/${new Date()}.txt`;
         const fileUrl = await uploadToS3(stringifiedExpenses, fileName);
-        await Report.create({ url: fileUrl, userId: req.user.id }, { transaction: t });
-        await t.commit();
+        const report = await Report.create({ url: fileUrl, userId: req.user._id });
+        await req.user.updateOne({$push: {expenseReport:report._id}});
         res.status(200).json({ fileUrl });
     }
     catch (err) {
         console.error('Error downloading report:', err);
-        await t.rollback();
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }

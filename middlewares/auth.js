@@ -8,7 +8,7 @@ const authenticate = async (req, res, next) => {
             return res.status(401).json({ message: "Authorization token is missing" });
         }
         const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN);
-        const user = await User.findByPk(decoded.id);
+        const user = await User.findById(decoded._id);
         if (!user) {
             return res.status(401).json({ message: "Invalid token" });
         }
