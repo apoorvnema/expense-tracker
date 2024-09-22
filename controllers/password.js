@@ -15,7 +15,7 @@ exports.sendForgotPassword = async (req, res) => {
             throw error;
         }
         const forgetPasswordId = uuidv4();
-        const htmlContent = `<a href="https://expense-tracker.apoorvnema.pro/password/forgotpassword/${forgetPasswordId}">Link to Reset Password</a>`;
+        const htmlContent = `<a href="https://expense-tracker.apoorvnema.com/password/forgotpassword/${forgetPasswordId}">Link to Reset Password</a>`;
         const transporter = createTransport({
             host: process.env.BREVO_HOST,
             port: 587,
@@ -25,7 +25,7 @@ exports.sendForgotPassword = async (req, res) => {
             }
         });
         const mailOptions = {
-            from: '"Apoorv Nema" <contact@apoorvnema.pro>',
+            from: '"Apoorv Nema" <contact@apoorvnema.com>',
             to: req.body.email,
             subject: 'Forgot Password',
             text: htmlContent

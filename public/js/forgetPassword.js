@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Passwords do not match. Please try again.');
         } else {
             try {
-                const response = await fetch("https://expense-tracker.apoorvnema.pro" + window.location.pathname, {
+                const response = await fetch("https://expense-tracker.apoorvnema.com" + window.location.pathname, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
